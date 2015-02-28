@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="http://ux.benefitfocus.com/ui/edge/vendor/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ux.benefitfocus.com/ui/edge/vendor/highcharts/highcharts.js" type="text/javascript"></script>
+    <script src="http://ux.benefitfocus.com/ui/edge/vendor/highcharts/modules/exporting.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $(function () {
+        $('#container').highcharts({{ data }});
+    });
+});
+
+</script>
+</body>
+</html>

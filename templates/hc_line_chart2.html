@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+    <script src="http://ux.benefitfocus.com/ui/edge/vendor/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ux.benefitfocus.com/ui/edge/vendor/highcharts/highcharts.js" type="text/javascript"></script>
+    <script src="http://ux.benefitfocus.com/ui/edge/vendor/highcharts/modules/exporting.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+
+        function set_highcharts_numeric_symbols() {
+
+            // -- Highcharts uses Metric prefixes by default, like so:
+            // --      ['k', 'M', 'G', 'T', 'P', 'E'].
+            // -- Change to spell out large numbers as standard "dictionary" names instead.
+            // -- null indicates number will be shown in full with no abbreviation.
+            Highcharts.setOptions({
+                lang: {
+                    numericSymbols: [null, ' Million', ' Billion', ' Trillion', ' Quadrillion', ' Quintillion']
+                }
+            });
+        }
+
+        function highcharts_line_chart() {
+
+            // -- Set defaults --
+            var renderTo = 'container',
+
+                chartWidth = null,
+                chartHeight = null,
+                chartMargin = [null],
+
+                legendEnabled = false,
+                legendAlign = null,
+                legendVerticalAlign = null,
+                legendLayout = null,
+
+                title = '<TITLE>',
+                subtitleText = null,
+
+                xAxisTitle = null,
+                xAxisType = "datetime",
+                xAxisDateTimeLabelFormats = {
+                    millisecond: '%H:%M:%S.%L',
+                    second: '%H:%M:%S',
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%e. %b',
+                    week: '%e. %b',
+                    month: '%b \'%y',
+                    year: '%Y'
+                },
+
+                xAxisCategories = null,
+                xAxisLabelsStaggerLines = null,
+                xAxisLabelsRotation = 0,
+                xAxisLabelsFontSize = "12px",
+                xAxisLabelsFontFamily = "Verdana, sans-serif",
+                yAxisTitle = null,
+                yAxisMin = null,
+                yAxisStartOnTick = true,
+                yAxisShowFirstLabel = true,
+
+
+                tooltipValueSuffix= null,
+                tooltipValuePrefix = null,
+            
+                seriesName = null,
+                seriesData = [],
+
+                seriesArray = [];
+
+
+
+            function render() {
+
+                set_highcharts_numeric_symbols();
+
+                // -- *** Generate chart here *** --
+
+                chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: renderTo,
+                        //width: chartWidth,
+                        //height: chartHeight,
+                        //margin: chartMargin,
+                        zoomType: 'x',
+                        spacingRight: 20
+                    },
+                    legend: {
+                        enabled: legendEnabled,
+                        align: legendAlign,
+                        verticalAlign: legendVerticalAlign,
+                        layout: legendLayout
+                    },
+                    title: {
+                        text: title
+                    },
+                    subtitle: {
+                        text: subtitleText
+                    },
+                    xAxis: {
+                        type: xAxisType,
+                        dateTimeLabelFormats: xAxisDateTimeLabelFormats,
+                        title: {
+                            text: xAxisTitle
+                        },
+                        categories: xAxisCategories,
+                        labels: {
+                            staggerLines: xAxisLabelsStaggerLines,
+                            rotation: xAxisLabelsRotation,
+                            style: {
+                                fontSize: xAxisLabelsFontSize,
+                                fontFamily: xAxisLabelsFontFamily //'Verdana, sans-serif'
+                            }
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: yAxisTitle
+                        },
+                        startOnTick: yAxisStartOnTick,
+                        showFirstLabel: yAxisShowFirstLabel,
+                        min: yAxisMin
+                    },
+                    exporting: {
+                        buttons: {
+                            exportButton: {
+                                enabled:false
+                            },
+                            printButton: {
+                                enabled:false
+                            }
+                        }
+                    },
+                    tooltip: {
+                        shared: true,
+                        valuePrefix: tooltipValuePrefix,
+                        valueSuffix: tooltipValueSuffix
+                    },
+                    credits : {
+                       enabled : false  // Disable Highcharts.com credit
+                    },
+                    series: seriesArray
+                });  // End chart
+
+            }
+
+            // -- Getter/Setters --
+
+            render.renderTo = function(value) {
+                if (!arguments.length) return renderTo;
+                renderTo = value;
+                return render;
+            };
+
+            render.chartWidth = function(value) {
+                if (!arguments.length) return chartWidth;
+                chartWidth = value;
+                return render;
+            };
+
+            render.chartHeight = function(value) {
+                if (!arguments.length) return chartHeight;
+                chartHeight = value;
+                return render;
+            };
+
+            render.chartMargin = function(value) {
+                if (!arguments.length) return chartMargin;
+                chartMargin = value;
+                return render;
+            };
+
+            render.legendEnabled = function(value) {
+                if (!arguments.length) return legendEnabled;
+                legendEnabled = value;
+                return render;
+            };
+
+            render.legendAlign = function(value) {
+                if (!arguments.length) return legendAlign;
+                legendAlign = value;
+                return render;
+            };
+
+            render.legendVerticalAlign = function(value) {
+                if (!arguments.length) return legendVerticalAlign;
+                legendVerticalAlign = value;
+                return render;
+            };
+
+            render.legendLayout = function(value) {
+                if (!arguments.length) return legendLayout;
+                legendLayout = value;
+                return render;
+            };
+
+            render.title = function(value) {
+                if (!arguments.length) return title;
+                title = value;
+                return render;
+            };
+
+            render.subtitleText = function(value) {
+                if (!arguments.length) return subtitleText;
+                subtitleText = value;
+                return render;
+            };
+
+            render.xAxisTitle = function(value) {
+                if (!arguments.length) return xAxisTitle;
+                xAxisTitle = value;
+                return render;
+            };
+
+            render.xAxisType = function(value) {
+                if (!arguments.length) return xAxisType;
+                xAxisType = value;
+                return render;
+            };
+
+            render.xAxisDateTimeLabelFormats = function(value) {
+                if (!arguments.length) return xAxisDateTimeLabelFormats;
+                xAxisDateTimeLabelFormats = value;
+                return render;
+            };
+
+            render.xAxisCategories = function(value) {
+                if (!arguments.length) return xAxisCategories;
+                xAxisCategories = value;
+                return render;
+            };
+
+            render.xAxisLabelsStaggerLines = function(value) {
+                if (!arguments.length) return xAxisLabelsStaggerLines;
+                xAxisLabelsStaggerLines = value;
+                return render;
+            };
+
+            render.xAxisLabelsRotation = function(value) {
+                if (!arguments.length) return xAxisLabelsRotation;
+                xAxisLabelsRotation = value;
+                return render;
+            };
+
+            render.xAxisLabelsFontSize = function(value) {
+                if (!arguments.length) return xAxisLabelsFontSize;
+                xAxisLabelsFontSize = value;
+                return render;
+            };
+
+            render.xAxisLabelsFontFamily = function(value) {
+                if (!arguments.length) return xAxisLabelsFontFamily;
+                xAxisLabelsFontFamily = value;
+                return render;
+            };
+
+            render.yAxisTitle = function(value) {
+                if (!arguments.length) return yAxisTitle;
+                yAxisTitle = value;
+                return render;
+            };
+
+            render.yAxisStartOnTick = function(value) {
+                if (!arguments.length) return yAxisStartOnTick;
+                yAxisStartOnTick = value;
+                return render;
+            };
+
+            render.yAxisShowFirstLabel = function(value) {
+                if (!arguments.length) return yAxisShowFirstLabel;
+                yAxisShowFirstLabel = value;
+                return render;
+            };
+
+            render.yAxisMin = function(value) {
+                if (!arguments.length) return yAxisMin;
+                yAxisMin = value;
+                return render;
+            };
+
+            render.tooltipValueSuffix = function(value) {
+                if (!arguments.length) return tooltipValueSuffix;
+                tooltipValueSuffix = value;
+                return render;
+            };
+
+            render.tooltipValuePrefix = function(value) {
+                if (!arguments.length) return tooltipValuePrefix;
+                tooltipValuePrefix = value;
+                return render;
+            };
+
+            render.seriesArray = function(value) {
+                if (!arguments.length) return seriesArray;
+                seriesArray = value;
+                return render;
+            };
+
+            render.seriesName = function(value) {
+                if (!arguments.length) return seriesName;
+                seriesName = value;
+                return render;
+            };
+
+            render.seriesData = function(value) {
+                if (!arguments.length) return seriesData;
+                seriesData = value;
+                return render;
+            };
+
+            return render;
+
+        } // -- End highcharts_line_chart() function
+        
+    </script>    
+    
+</head>
+<body>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+
+        var render_line_chart = highcharts_line_chart()
+        render_line_chart.renderTo('container')
+            .title('Benefitfocus Platform (eE, eB, HRiT) Consumer Growth')
+            .yAxisTitle('Number of Consumers')
+            .yAxisStartOnTick(false)
+            .yAxisShowFirstLabel(true)
+            .seriesArray({{ data }})
+                
+        render_line_chart();
+});
+
+</script>
+</body>
+</html>
