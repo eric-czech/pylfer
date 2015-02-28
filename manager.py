@@ -1,11 +1,11 @@
 __author__ = 'eczech'
 
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+from pynch.template import default_transform
 from IPython.display import HTML, IFrame
 from StringIO import StringIO
-from jinja2 import Environment, FileSystemLoader, TemplateNotFound
-import os
 import tempfile
-from research.visualization.template import default_transform
+import os
 
 
 class VizManager(object):
