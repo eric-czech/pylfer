@@ -1,6 +1,6 @@
 __author__ = 'eczech'
 
-from pynch.template import NVD3LineChart, NVD3StackedAreaChart, HighchartsLineChart, has_date_index
+from pyncer.template import NVD3LineChart, NVD3StackedAreaChart, HighchartsLineChart, has_date_index
 
 class VizEngine(object):
 
