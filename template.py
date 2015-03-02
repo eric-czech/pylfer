@@ -137,6 +137,40 @@ class NVD3StackedAreaChart(Viz):
 # Highcharts line chart #
 #########################
 
+
+def _highcharts_series(data, series_types={}):
+    """ Convert data frame to Highcharts compatible json
+
+    Generates results in the form:
+        [{
+            type: 'area',
+            name: 'Series name',
+            <other highcharts per-series options>,
+            data: [ <value>, <value>, ... ]
+        }, ...]
+    """
+
+    # If the index is a date, transform it to UTC ms making sure
+    # to copy the result to a new index object so as not to alter
+    # the original index
+    if has_date_index(data):
+        idx = data.index.map(lambda d: int(pd.to_datetime(d, utc=True).value / 1E6))
+    else:
+        idx = data.index
+
+    # Create a json object for each series in the frame and write the resulting
+    # json object to the given buffer
+    res = []
+    for col in data:
+        series = {
+            'type': series_types[col] if col in series_types.keys() else 'line',
+            'name': col,
+            'data': [[x, y] for (x, y) in zip(idx, data[col])]
+        }
+        res.append(series)
+    return res
+
+
 class HighchartsLineChart(Viz):
     """ Highcharts Line Chart Model
 
@@ -148,7 +182,7 @@ class HighchartsLineChart(Viz):
         :param chart_props: Chart configuration properties (these are Highcharts specific and would include
                 anything like xAxis, subtitle, title, legend, or plotOptions)
         """
-        self.fill_area_cols = fill_area_cols if fill_area_cols else []
+        self.fill_area_cols = dict([(c, 'area') for c in fill_area_cols]) if fill_area_cols else {}
         self.chart_props = chart_props
 
     def get_name(self):
@@ -168,27 +202,36 @@ class HighchartsLineChart(Viz):
                 data: [ <value>, <value>, ... ]
             }, ...]
         """
-
-        # If the index is a date, transform it to UTC ms making sure
-        # to copy the result to a new index object so as not to alter
-        # the original index
-        if has_date_index(data):
-            idx = data.index.map(lambda d: int(pd.to_datetime(d, utc=True).value / 1E6))
-        else:
-            idx = data.index
-
-        # Create a json object for each series in the frame and write the resulting
-        # json object to the given buffer
-        res = []
-        for col in data:
-            series = {
-                'type': 'area' if col in self.fill_area_cols else 'line',
-                'name': col,
-                'data': [[x, y] for (x, y) in zip(idx, data[col])]
-            }
-            res.append(series)
+        res = _highcharts_series(data, series_types=self.fill_area_cols)
         res = {'series': res}
         if self.chart_props:
             res.update(self.chart_props)
         output.write(json.dumps(res))
 
+class HighchartsConfigurableLineChart(Viz):
+    """ Configurable Highcharts Line Chart Model
+
+    Taken from http://www.highcharts.com/demo/line-time-series
+    """
+    def __init__(self):
+        """ Create a new Highcharts Line Chart instance"""
+
+    def get_name(self):
+        return 'Highcharts Configurable Line Chart'
+
+    def get_template(self):
+        return 'hc_brian.html'
+
+    def transform(self, data, output):
+        """ Convert data frame to json
+
+        Generates results in the form:
+            [{
+                type: 'area',
+                name: 'Series name',
+                <other highcharts per-series options>,
+                data: [ <value>, <value>, ... ]
+            }, ...]
+        """
+        res = _highcharts_series(data)
+        output.write(json.dumps(res))

@@ -1,6 +1,9 @@
 __author__ = 'eczech'
 
-from pyncer.template import NVD3LineChart, NVD3StackedAreaChart, HighchartsLineChart, has_date_index
+from pylfer.template import NVD3LineChart, NVD3StackedAreaChart, HighchartsLineChart
+from pylfer.template import HighchartsConfigurableLineChart
+from pylfer.template import has_date_index
+
 
 class VizEngine(object):
 
@@ -10,7 +13,7 @@ class VizEngine(object):
         """
         self.manager = manager
 
-    def nvd3_line_chart(self, data, fill_area_cols=None, date_format='%Y-%m-%d', height=300, width=300, filename=None):
+    def nvd3_line_chart(self, data, fill_area_cols=None, date_format='%Y-%m-%d', height=400, width=1000, filename=None):
         """ Render an NVD3 Line Chart "with Focus" or "Zoom"
 
         This template was created based on the example here: http://nvd3.org/examples/lineWithFocus.html
@@ -41,7 +44,7 @@ class VizEngine(object):
         }
         return self.manager.render(viz.get_template(), data, **props)
 
-    def nvd3_stacked_area_chart(self, data, date_format='%Y-%m-%d', height=100, width=300, filename=None):
+    def nvd3_stacked_area_chart(self, data, date_format='%Y-%m-%d', height=400, width=1000, filename=None):
         """ Render an NVD3 Stacked Area Chart
 
         This template was created based on the example here: http://nvd3.org/examples/stackedArea.html
@@ -73,7 +76,7 @@ class VizEngine(object):
         return self.manager.render(viz.get_template(), data, **props)
 
 
-    def hc_line_chart(self, data, date_format='%Y-%m-%d', height=100, width=300, filename=None):
+    def hc_line_chart(self, data, date_format='%Y-%m-%d', height=400, width=1000, filename=None):
         """ Renders a Highcharts Line Chart
 
         This template was created based on the example here: http://nvd3.org/examples/stackedArea.html
@@ -99,5 +102,38 @@ class VizEngine(object):
             'width': width,
             # Set a flag for the template indicating whether or not the x-axis is a date or number
             'x_is_date': has_date_index(data)
+        }
+        return self.manager.render(viz.get_template(), data, **props)
+
+    def hc_configurable_line_chart(self, data, opts=None, height=400, width=1000, filename=None):
+        """ Renders a Highcharts Line Chart with JS configuration options
+
+        This template was created based on the example here: http://nvd3.org/examples/stackedArea.html
+
+        :param data: Data frame to be rendered
+        :param opts: List of javascript options to pass to template for visualization configuration; e.g.:
+                    [
+                        '.title("Benefitfocus Platform (eE, eB, HRiT) Consumer Growth")',
+                        '.yAxisTitle("Number of Consumers")'
+                        '.yAxisStartOnTick(false)'
+                        '.yAxisShowFirstLabel(true)'
+                    ]
+        :param height (optional): Height of the resulting visualization
+        :param width (optional): Width of the resulting visualization
+        :param filename (optional): Name of html file in which to store the resulting visualization:
+                - if no filename is given, the plot will not be saved and only its content returned
+                - if the filename does not have a .html suffix, one will be appended automatically
+                - the full path of the resulting file will be accessible in the IPython.display.HTML
+                    instance returned as result.filename (it will be an absolute path and not just a name)
+        :return: IPython.display.HTML instance containing plot content (and the absolute path of the resulting
+                HTML render if a filename was specified)
+        """
+        viz = HighchartsConfigurableLineChart()
+        props = {
+            'transform': viz.transform,
+            'filename': filename,
+            'height': height,
+            'width': width,
+            'options': '\n\t'.join(opts) if opts else ''
         }
         return self.manager.render(viz.get_template(), data, **props)

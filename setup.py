@@ -1,9 +1,9 @@
 from distutils.core import setup
 
 setup(
-    name='pynch',
+    name='pylfer',
     version='0.0.1',
-    packages=['adhoc', 'pynch', 'research'],
+    packages=[],
     url='',
     license='MIT',
     author='eric-czech',

@@ -1,7 +1,7 @@
 __author__ = 'eczech'
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
-from pyncer.template import default_transform
+from pylfer.template import default_transform
 from IPython.display import HTML, IFrame
 from StringIO import StringIO
 import tempfile
