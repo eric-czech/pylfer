@@ -24,6 +24,8 @@ class VizManager(object):
         :param render_path: Absolute path under which rendered results will be stored
         """
         self.configure(template_path=template_path, render_path=render_path)
+        self.url_converter = None
+        self.template_params = None
 
     @staticmethod
     def _validate_dir(path):
@@ -42,7 +44,7 @@ class VizManager(object):
             filename += extension
         return filename
 
-    def configure(self, template_path=None, render_path=None, url_converter=None):
+    def configure(self, template_path=None, render_path=None, url_converter=None, template_params=None):
         """ Set properties of the visualization manager
 
         :param template_path: Absolute path to HTML template files
@@ -51,6 +53,11 @@ class VizManager(object):
                 - This conversion may actually involve deploying the rendered file to a different location
                 - The most common use case for this is converting the local file path to a URL that
                     can be served out of a local web server (e.g. Apache on a Mac)
+        :param template_params: Dictionary of global variable settings to be passed to all templates; typically,
+                this would be used to set js library paths such as "{
+                    'js_d3' : 'https://cdn.rawgit.com/mbostock/d3/master/d3.min.js',
+                    'js_jquery' : 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'
+                }" but it could also be used for any other shared settings for all template renders
         :return self
         """
         if url_converter:
@@ -62,6 +69,10 @@ class VizManager(object):
         if render_path:
             VizManager._validate_dir(render_path)
             self.render_path = render_path
+        if template_params:
+            if not type(template_params) is dict:
+                raise ValueError('Template params value must be a dictionary')
+            self.template_params = template_params
         return self
 
     def render(self, template, data, transform=DEFAULT_DATA_TRANSFORM, filename=None, **kwargs):
@@ -147,6 +158,13 @@ class VizManager(object):
             raise ValueError(
                 'Failed to find template with the name {} in directory {}'.format(template, self.template_path)
             )
+
+        # Add any global template parameters configured to the
+        # template parameters given for this single template rendering
+        if self.template_params:
+            kwargs.update(self.template_params)
+
+        # Fill in the template variables and return the resulting render
         return template.render(**kwargs)
 
 

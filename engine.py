@@ -10,9 +10,6 @@ class VizEngine(object):
         """
         self.manager = manager
 
-    def get_viz_manager(self):
-        return self.manager
-
     def nvd3_line_chart(self, data, fill_area_cols=None, date_format='%Y-%m-%d', height=300, width=300, filename=None):
         """ Render an NVD3 Line Chart "with Focus" or "Zoom"
 
