@@ -109,7 +109,7 @@ class VizManager(object):
                 url = self.url_converter(filename)
             # If a valid URL was returned, wrap it in an IFrame
             if url:
-                html = IFrame(src=url, width=kwargs.get('width', 500), height=kwargs.get('height', 500))._repr_html_ ()
+                html = IFrame(src=url, width=kwargs.get('width', 1000), height=kwargs.get('height', 400))._repr_html_ ()
                 html = HTML(data=html)    # Create an HTML instance with a raw string but also set the original file
                 html.filename = filename  # path even though it wasn't technically used to source the content
                 return html
